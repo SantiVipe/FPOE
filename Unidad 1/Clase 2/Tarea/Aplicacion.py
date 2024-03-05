@@ -1,28 +1,70 @@
 # Importaciones
 from tkinter import *
 from tkinter.messagebox import askyesno
+from tkcalendar import *
 import re
 #Funciones
-def validar():
-    nombre=entry1.get()
-    apellido=entry2.get()
-    correo=entry3.get()
-    edad=entry4.get()
-    fecha=entry5.get()
-    fecha_regex = r'^\d{2}/\d{2}/\d{4}$'  
-    if len(nombre)!=0 or len(apellido)!=0 or len(correo)!=0 or len(edad)!=0 or len(fecha)!=0:
-        if nombre.isalpha() and apellido.isalpha():
-            if edad.isdigit():
-                if  re.match(fecha_regex, fecha):
-                    print("Usuario validado con éxito!!!")
-                else:
-                    print("Error: El campo Fecha de Nacimiento debe tener el formato dd/mm/yyyy.")
-            else:
-                print("Error: Por favor verifique el campo Edad e intente nuevamente.")
-        else:
-            print("Error: Los campos Nombre y/o Apellido sólo aceptan letras, por favor verifique.")
+def validarLetras(valor):
+    patron=re.compile("^[A-Za-zñÑáéíóú]*$")
+    resultado=patron.match(valor.get()) is not None
+    if not resultado:
+        return False
+    return True
+def validarLetrasCorreo(valor):
+    patron=re.compile("^[A-Za-zñÑ0-9.@]*$")
+    resultado=patron.match(valor.get()) is not None
+    if not resultado:
+        return False
+    return True
+def validarNumeros(valor):
+    num=re.compile("^[0-9]*$")
+    resultado= num.match(valor.get())is not None
+    if not resultado:
+        return False
+    return True
+def evento_presionar_tecla(evento):
+    global texto_validar_nombre
+    global nombre
+    global texto_validar_apellido
+    global apellido
+    global texto_validar_correo
+    global correo
+    global texto_validar_edad
+    global edad
+    if validarLetras(nombre):
+        texto_validar_nombre = ""
     else:
-        print("Error: Por favor verifique que no hayan espacios en blanco.")
+        texto_validar_nombre = "Sólo se permiten letras en el campo"
+    labelValidacionNombre.config(text= texto_validar_nombre,fg="red")
+    if validarLetras(apellido):
+        texto_validar_apellido = ""
+    else:
+        texto_validar_apellido="Sólo se permiten letras en el campo"
+    labelValidacionApellido.config(text=texto_validar_apellido,fg="red")
+    if validarLetrasCorreo(correo):
+        texto_validar_correo = ""
+    else:
+        texto_validar_correo="Sólo se permiten letras/numeros/./@"
+    labelValidacionCorreo.config(text=texto_validar_correo,fg="red")
+    if validarNumeros(edad):
+        texto_validar_edad = ""
+    else:
+        texto_validar_edad = "Sólo se permiten números"
+    labelValidacionEdad.config(text=texto_validar_edad,fg="red")
+
+def validar_boton():
+    nombre_sin_espacios = nombre.get().strip()
+    apellido_sin_espacios = apellido.get().strip()
+    correo_sin_espacios = correo.get().strip()
+    edad_sin_espacios = edad.get().strip()
+
+    if not (nombre_sin_espacios and apellido_sin_espacios and correo_sin_espacios and edad_sin_espacios):
+        texto_validacion = "Verifique que no hayan campos en blanco"
+    elif (validarLetras(nombre) and validarLetras(apellido) and validarLetrasCorreo(correo) and validarNumeros(edad)):
+        texto_validacion= "Usuario Validado con Éxito!!!"
+    else:
+        texto_validacion = "Hay algún campo incorrecto"
+    labelValidacion.config(text=texto_validacion,fg="red")
     
 def salir():
     if askyesno("Salir de la aplicación",'¿Desea salir de la aplicación?'):
@@ -34,33 +76,53 @@ ventana.geometry("500x500")
 ventana.config(bg="aquamarine3")
 
 # Labels
-label1=Label(ventana,text="Nombre",bg="aquamarine3")
-label1.place(relx=0.05,rely=0.05,relwidth=0.1,relheight=0.05)
-label2=Label(ventana,text="Apellido",bg="aquamarine3")
-label2.place(relx=0.05,rely=0.2,relwidth=0.1,relheight=0.05)
-label3=Label(ventana,text="Correo",bg="aquamarine3")
-label3.place(relx=0.05,rely=0.35,relwidth=0.1,relheight=0.05)
-label4=Label(ventana,text="Edad",bg="aquamarine3")
-label4.place(relx=0.05,rely=0.5,relwidth=0.1,relheight=0.05)
-label5=Label(ventana,text="Fecha de\nNacimiento",bg="aquamarine3")
-label5.place(relx=0.03,rely=0.65,relwidth=0.15,relheight=0.05)
+nombre=StringVar(ventana)
+apellido=StringVar(ventana)
+correo=StringVar(ventana)
+edad= StringVar(ventana)
+labelnombre=Label(ventana,text="Nombre",bg="aquamarine3")
+labelnombre.place(relx=0.05,rely=0.1,relwidth=0.1,relheight=0.05)
+labelapellido=Label(ventana,text="Apellido",bg="aquamarine3")
+labelapellido.place(relx=0.05,rely=0.25,relwidth=0.1,relheight=0.05)
+labelcorreo=Label(ventana,text="Correo",bg="aquamarine3")
+labelcorreo.place(relx=0.05,rely=0.4,relwidth=0.1,relheight=0.05)
+labeledad=Label(ventana,text="Edad",bg="aquamarine3")
+labeledad.place(relx=0.05,rely=0.55,relwidth=0.1,relheight=0.05)
+labelfecha=Label(ventana,text="Fecha de\nNacimiento",bg="aquamarine3")
+labelfecha.place(relx=0.03,rely=0.7,relwidth=0.15,relheight=0.05)
+label6=Label(ventana,text="Registre su Información",bg="aquamarine3")
+label6.place(relx=0.35,rely=0.02,relwidth=0.3,relheight=0.05)
+labelValidacionNombre=Label(ventana,text="",bg="aquamarine3")
+labelValidacionNombre.place(relx=0.25,rely=0.15,relwidth=0.55,relheight=0.1)
+labelValidacionApellido=Label(ventana,text="",bg="aquamarine3")
+labelValidacionApellido.place(relx=0.25,rely=0.3,relwidth=0.55,relheight=0.1)
+labelValidacionCorreo=Label(ventana,text="",bg="aquamarine3")
+labelValidacionCorreo.place(relx=0.25,rely=0.45,relwidth=0.55,relheight=0.1)
+labelValidacionEdad=Label(ventana,text="",bg="aquamarine3")
+labelValidacionEdad.place(relx=0.25,rely=0.6,relwidth=0.55,relheight=0.1)
+labelValidacion=Label(ventana,text="",fg="aquamarine3",bg="aquamarine3")
+labelValidacion.place(relx=0.25,rely=0.75,relwidth=0.55,relheight=0.07)
 
 # Entrys
-entry1=Entry(ventana,bg="beige")
-entry1.place(relx=0.25,rely=0.05,relwidth=0.55,relheight=0.05)
-entry2=Entry(ventana,bg="beige")
-entry2.place(relx=0.25,rely=0.2,relwidth=0.55,relheight=0.05)
-entry3=Entry(ventana,bg="beige")
-entry3.place(relx=0.25,rely=0.35,relwidth=0.55,relheight=0.05)
-entry4=Entry(ventana,bg="beige")
-entry4.place(relx=0.25,rely=0.5,relwidth=0.55,relheight=0.05)
-entry5=Entry(ventana,bg="beige")
-entry5.place(relx=0.25,rely=0.65,relwidth=0.55,relheight=0.05)
+entry_nombre=Entry(ventana,bg="beige",textvariable=nombre)
+entry_nombre.bind("<KeyRelease>", evento_presionar_tecla)
+entry_nombre.place(relx=0.25,rely=0.1,relwidth=0.55,relheight=0.05)
+entry_apellido=Entry(ventana,bg="beige",textvariable=apellido)
+entry_apellido.bind("<KeyRelease>",evento_presionar_tecla)
+entry_apellido.place(relx=0.25,rely=0.25,relwidth=0.55,relheight=0.05)
+entry_correo=Entry(ventana,bg="beige",textvariable=correo)
+entry_correo.bind("<KeyRelease>",evento_presionar_tecla)
+entry_correo.place(relx=0.25,rely=0.4,relwidth=0.55,relheight=0.05)
+entry_edad=Entry(ventana,bg="beige",textvariable=edad)
+entry_edad.bind("<KeyRelease>",evento_presionar_tecla)
+entry_edad.place(relx=0.25,rely=0.55,relwidth=0.55,relheight=0.05)
+entry_calendario=DateEntry(ventana,bg="beige",year=2000)
+entry_calendario.place(relx=0.25,rely=0.7,relwidth=0.55,relheight=0.05)
 
 # Buttons
-boton1=Button(ventana,text="Validar",bg="aquamarine1",command=lambda:validar())
-boton1.place(relx=0.25,rely=0.8,relwidth=0.2,relheight=0.1)
+boton1=Button(ventana,text="Validar",bg="aquamarine1",command=lambda:validar_boton())
+boton1.place(relx=0.25,rely=0.82,relwidth=0.2,relheight=0.1)
 boton2=Button(ventana,text="Salir",bg="aquamarine1",command=lambda:salir())
-boton2.place(relx=0.55,rely=0.8,relwidth=0.2,relheight=0.1)
+boton2.place(relx=0.55,rely=0.82,relwidth=0.2,relheight=0.1)
 
 ventana.mainloop()
