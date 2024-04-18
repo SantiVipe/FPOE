@@ -25,6 +25,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('v1/post', Post_APIView.as_view()), 
     path('v1/post/<int:pk>/', Post_APIView_Detail.as_view()),
-    path('v1/teclado', Teclado_APIView.as_view()), 
-    path('v1/teclado/<int:pk>/', Teclado_APIView_Detail.as_view()),
+    path('v1/teclado', mostrar_ventana_tkinter, name='mi_vista'), 
+    path('v1/teclado/<int:pk>/', mostrar_ventana_tkinter, name='mi_vista'),
 ]

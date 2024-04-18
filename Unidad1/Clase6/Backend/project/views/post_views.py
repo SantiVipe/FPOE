@@ -1,7 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..serializer.post_serializer import PostSerializers
-from FPOE.Unidad1.Clase6.Backend.api.models.post import Post
 from api.models.post import Post
 from rest_framework import status
 from django.http import Http404
