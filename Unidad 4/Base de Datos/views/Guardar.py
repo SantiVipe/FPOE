@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter.messagebox import askyesno,showerror,showinfo
+from tkinter.messagebox import askyesno,showerror
 class Guardar():
     def salir(self):
         if askyesno("Salir de la aplicación","¿Desea salir de la aplicación?"):
